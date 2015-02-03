@@ -1,15 +1,5 @@
 package org.openmrs.module.rwandareports.web.controller;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.io.IOUtils;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -32,6 +22,15 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 public class RunReportsController {
@@ -67,8 +66,8 @@ public class RunReportsController {
 		
 		Report rep = rs.runReport(rr);
 		
-		String filename = rm.getRenderer().getFilename(rep.getRequest().getReportDefinition().getParameterizable(), rm.getArgument()).replace(" ", "_");
-		response.setContentType(rm.getRenderer().getRenderedContentType(rep.getRequest().getReportDefinition().getParameterizable(), rm.getArgument()));
+		String filename = rm.getRenderer().getFilename(rep.getRequest());
+		response.setContentType(rm.getRenderer().getRenderedContentType(rep.getRequest()));
 		byte[] data = rep.getRenderedOutput();
 		
 		if (data != null) {
@@ -125,8 +124,8 @@ public class RunReportsController {
 		
 		Report rep = rs.runReport(rr);
 		
-		String filename = rm.getRenderer().getFilename(rep.getRequest().getReportDefinition().getParameterizable(), rm.getArgument()).replace(" ", "_");
-		response.setContentType(rm.getRenderer().getRenderedContentType(rep.getRequest().getReportDefinition().getParameterizable(), rm.getArgument()));
+		String filename = rm.getRenderer().getFilename(rep.getRequest());
+		response.setContentType(rm.getRenderer().getRenderedContentType(rep.getRequest()));
 		byte[] data = rep.getRenderedOutput();
 		
 		if (data != null) {
