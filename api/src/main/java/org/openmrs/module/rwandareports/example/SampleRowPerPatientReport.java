@@ -87,7 +87,9 @@ public class SampleRowPerPatientReport extends ImbReportManager {
 	@Override
 	public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
 		List<ReportDesign> l = new ArrayList<ReportDesign>();
-		l.add(ReportManagerUtil.createExcelDesign(REPORT_DESIGN_UUID, reportDefinition));
+		ReportDesign d = ReportManagerUtil.createExcelDesign(REPORT_DESIGN_UUID, reportDefinition);
+		d.addPropertyValue("sortWeight", "5000");
+		l.add(d);
 		return l;
 	}
 
