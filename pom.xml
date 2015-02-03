@@ -23,8 +23,8 @@
 	</modules>
 
 	<properties>
-		<openMRSVersion>1.9.1</openMRSVersion>
-		<reportingVersion>0.8.1</reportingVersion>
+		<openMRSVersion>1.9.2</openMRSVersion>
+		<reportingVersion>0.9.3-SNAPSHOT</reportingVersion>
 		<rowperpatientsVersion>1.5.2-SNAPSHOT</rowperpatientsVersion>
 		<orderextensionVersion>2.0-SNAPSHOT</orderextensionVersion>
 		<reportingobjectgroupVersion>1.1-SNAPSHOT</reportingobjectgroupVersion>

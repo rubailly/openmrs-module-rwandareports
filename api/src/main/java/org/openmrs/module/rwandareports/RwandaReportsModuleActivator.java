@@ -21,6 +21,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
+import org.openmrs.module.reporting.report.manager.ReportManagerUtil;
+import org.openmrs.module.rwandareports.example.ImbReportManager;
 import org.openmrs.scheduler.SchedulerException;
 import org.openmrs.scheduler.Task;
 import org.openmrs.scheduler.TaskDefinition;
@@ -38,6 +40,7 @@ public class RwandaReportsModuleActivator extends BaseModuleActivator {
 	public void started() {
 		log.info("Started Rwanda Report Module Config");
 		registerTask("Register Reports", "Registers report definitions", RegisterReportsTask.class, 60 * 60 * 24l);
+		ReportManagerUtil.setupAllReports(ImbReportManager.class);
 	}
 	
 	/**
