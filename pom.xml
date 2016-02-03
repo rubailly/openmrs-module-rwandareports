@@ -33,6 +33,7 @@
 		<heightweighttrackerVersion>1.0.2</heightweighttrackerVersion>
 		<calculationVersion>1.0</calculationVersion>
 		<logicVersion>0.5.2</logicVersion>
+		<patientsummaryVersion>2.1</patientsummaryVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<MODULE_ID>${project.parent.artifactId}</MODULE_ID>
 		<MODULE_NAME>${project.parent.name}</MODULE_NAME>
@@ -84,21 +85,29 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>reporting-api</artifactId>
-			<version>${reportingVersion}</version>
-			<type>jar</type>
-			<scope>provided</scope>
-		</dependency>
+	<dependency>
+		<groupId>org.openmrs.module</groupId>
+		<artifactId>reporting-api</artifactId>
+		<version>${reportingVersion}</version>
+		<type>jar</type>
+		<scope>provided</scope>
+	</dependency>
 
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>reporting-omod</artifactId>
-			<version>${reportingVersion}</version>
-			<type>jar</type>
-			<scope>provided</scope>
-		</dependency>
+	<dependency>
+		<groupId>org.openmrs.module</groupId>
+		<artifactId>patientsummary-api</artifactId>
+		<version>${patientsummaryVersion}</version>
+		<type>jar</type>
+		<scope>provided</scope>
+	</dependency>
+
+	<dependency>
+		<groupId>org.openmrs.module</groupId>
+		<artifactId>reporting-omod</artifactId>
+		<version>${reportingVersion}</version>
+		<type>jar</type>
+		<scope>provided</scope>
+	</dependency>
 
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
