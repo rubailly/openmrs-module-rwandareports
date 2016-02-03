@@ -126,7 +126,10 @@ public class SetupOncologyExternalBiopsyContactList {
 		
 		dataSetDefinition.addColumn(RowPerPatientColumns.getIMBId("id"), new HashMap<String, Object>());
 		dataSetDefinition2.addColumn(RowPerPatientColumns.getIMBId("id"), new HashMap<String, Object>());
-		 
+		
+		dataSetDefinition.addColumn(RowPerPatientColumns.getArchivingId("archivingId"), new HashMap<String, Object>());
+		dataSetDefinition2.addColumn(RowPerPatientColumns.getArchivingId("archivingId"), new HashMap<String, Object>());
+		
 		dataSetDefinition.addColumn(RowPerPatientColumns.getMostRecent("biopsyResult", biopsyResult, "dd/MMM/yyyy"), new HashMap<String, Object>());
 		dataSetDefinition2.addColumn(RowPerPatientColumns.getMostRecent("accession", accession, "dd/MMM/yyyy"), new HashMap<String, Object>());
 		

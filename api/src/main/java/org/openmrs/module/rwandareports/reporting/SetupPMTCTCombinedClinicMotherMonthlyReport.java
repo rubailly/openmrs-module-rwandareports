@@ -347,6 +347,14 @@ public class SetupPMTCTCombinedClinicMotherMonthlyReport {
 		dataSetDefinition4.addColumn(address1, new HashMap<String, Object>());
 		dataSetDefinition6.addColumn(address1, new HashMap<String, Object>());
 		
+      MultiplePatientDataDefinitions tracNetId=RowPerPatientColumns.getTracnetId("TRACNET_ID");
+		
+		dataSetDefinition1.addColumn(tracNetId, new HashMap<String, Object>());
+		dataSetDefinition2.addColumn(tracNetId, new HashMap<String, Object>());
+		dataSetDefinition3.addColumn(tracNetId, new HashMap<String, Object>());
+		dataSetDefinition4.addColumn(tracNetId, new HashMap<String, Object>());
+		dataSetDefinition6.addColumn(tracNetId, new HashMap<String, Object>());
+		
 		MostRecentObservation viralLoad = RowPerPatientColumns.getMostRecentViralLoad("Most recent viralLoad", "@ddMMMyy");
 		dataSetDefinition1.addColumn(viralLoad, new HashMap<String, Object>());
 		dataSetDefinition2.addColumn(viralLoad, new HashMap<String, Object>());

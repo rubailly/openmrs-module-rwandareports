@@ -624,6 +624,23 @@ public class SetupPediatricLateVisitAndCD4Report {
 		dataSetDefinition10.addColumn(address1, new HashMap<String, Object>());
 		dataSetDefinition11.addColumn(address1, new HashMap<String, Object>());
 		
+		
+		MultiplePatientDataDefinitions tracNetId=RowPerPatientColumns.getTracnetId("TRACNET_ID");
+		
+		dataSetDefinition1.addColumn(tracNetId, new HashMap<String, Object>());
+		dataSetDefinition2.addColumn(tracNetId, new HashMap<String, Object>());
+		dataSetDefinition3.addColumn(tracNetId, new HashMap<String, Object>());
+		dataSetDefinition3_1.addColumn(tracNetId, new HashMap<String, Object>());
+		dataSetDefinition4.addColumn(tracNetId, new HashMap<String, Object>());
+		dataSetDefinition6.addColumn(tracNetId, new HashMap<String, Object>());
+		/*dataSetDefinition7.addColumn(tracNetId, new HashMap<String, Object>());
+		dataSetDefinition8.addColumn(tracNetId, new HashMap<String, Object>());
+		*/dataSetDefinition9.addColumn(tracNetId, new HashMap<String, Object>());
+		dataSetDefinition10.addColumn(tracNetId, new HashMap<String, Object>());
+		dataSetDefinition11.addColumn(tracNetId, new HashMap<String, Object>());
+		
+		
+		
 		MostRecentObservation viralLoad = RowPerPatientColumns.getMostRecentViralLoad("Most recent viralLoad", null);
 		dataSetDefinition1.addColumn(viralLoad, new HashMap<String, Object>());
 		dataSetDefinition3.addColumn(viralLoad, new HashMap<String, Object>());

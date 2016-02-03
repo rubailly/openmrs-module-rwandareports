@@ -116,6 +116,9 @@ public class SetupChemotherapyDailyExpectedPatientList {
 		
 		dataSetDefinition.addColumn(RowPerPatientColumns.getIMBId("id"), new HashMap<String, Object>());
 		
+		dataSetDefinition.addColumn(RowPerPatientColumns.getArchivingId("archivingId"), new HashMap<String, Object>());
+		
+		
 		dataSetDefinition.addColumn(RowPerPatientColumns.getDrugRegimenInformationParameterized("regimen", false, false), ParameterizableUtil.createParameterMappings("asOfDate=${endDate},untilDate=${endDate}"));
 		dataSetDefinition.addColumn(RowPerPatientColumns.getDrugRegimenInformationParameterized("regimenDrugs", chemotherapy, false, true), ParameterizableUtil.createParameterMappings("asOfDate=${endDate},untilDate=${endDate}"));
 		

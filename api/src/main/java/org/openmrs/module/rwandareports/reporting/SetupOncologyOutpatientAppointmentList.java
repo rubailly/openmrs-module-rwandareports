@@ -119,6 +119,10 @@ public class SetupOncologyOutpatientAppointmentList {
 		dataSetDefinition3.addColumn(RowPerPatientColumns.getSystemId("id"), new HashMap<String, Object>());
 		dataSetDefinition4.addColumn(RowPerPatientColumns.getSystemId("id"), new HashMap<String, Object>());
 		
+		dataSetDefinition2.addColumn(RowPerPatientColumns.getArchivingId("archivingId"), new HashMap<String, Object>());
+		dataSetDefinition3.addColumn(RowPerPatientColumns.getArchivingId("archivingId"), new HashMap<String, Object>());
+		dataSetDefinition4.addColumn(RowPerPatientColumns.getArchivingId("archivingId"), new HashMap<String, Object>());
+		
 		dataSetDefinition.addColumn(RowPerPatientColumns.getFirstNameColumn("givenName"), new HashMap<String, Object>());
 		dataSetDefinition2.addColumn(RowPerPatientColumns.getFirstNameColumn("givenName"), new HashMap<String, Object>());
 		dataSetDefinition3.addColumn(RowPerPatientColumns.getFirstNameColumn("givenName"), new HashMap<String, Object>());

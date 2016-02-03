@@ -144,6 +144,8 @@ public class SetupPediHIVConsultationSheet {
 		
 		dataSetDefinition.addColumn(RowPerPatientColumns.getIMBId("Id"), new HashMap<String, Object>());
 		
+		dataSetDefinition.addColumn(RowPerPatientColumns.getTracnetId("TRACNET_ID"), new HashMap<String, Object>());
+		
 		dataSetDefinition.addColumn(RowPerPatientColumns.getDateOfBirth("DOB", "dd-MMM-yyyy", "yyyy"),
 		    new HashMap<String, Object>());
 		

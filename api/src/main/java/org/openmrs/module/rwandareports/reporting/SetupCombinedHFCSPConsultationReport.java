@@ -150,6 +150,8 @@ public class SetupCombinedHFCSPConsultationReport {
 		dataSetDefinition.addColumn(RowPerPatientColumns.getFamilyNameColumn("familyName"), new HashMap<String, Object>());
 		
 		dataSetDefinition.addColumn(RowPerPatientColumns.getIMBId("InfantId"), new HashMap<String, Object>());
+
+		dataSetDefinition.addColumn(RowPerPatientColumns.getTracnetId("TRACNET_ID"), new HashMap<String, Object>());
 		
 		StateOfPatient txGroup = RowPerPatientColumns.getStateOfPatient("infantGroup", pmtctCombined, treatmentGroup,
 			    new GroupStateFilter());
@@ -170,6 +172,11 @@ public class SetupCombinedHFCSPConsultationReport {
 		EvaluateDefinitionForOtherPersonData motherId = RowPerPatientColumns.getDefinitionForOtherPerson("MotherId", mother,
 		    RowPerPatientColumns.getIMBId("InfantId"));
 		dataSetDefinition.addColumn(motherId, new HashMap<String, Object>());
+		
+		EvaluateDefinitionForOtherPersonData motherTracNetId = RowPerPatientColumns.getDefinitionForOtherPerson("motherTracNetId", mother,
+			    RowPerPatientColumns.getTracnetId("TRACNET_ID"));
+			dataSetDefinition.addColumn(motherTracNetId, new HashMap<String, Object>());
+			
 		
 		dataSetDefinition.addColumn(RowPerPatientColumns.getDateOfBirth("birthdate", "ddMMMyyyy", "ddMMMyyyy"),
 		    new HashMap<String, Object>());

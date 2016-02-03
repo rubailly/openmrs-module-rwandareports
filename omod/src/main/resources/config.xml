@@ -976,6 +976,12 @@
 		<description>Identifier type that should be returned for the Primary
 			Care</description>
 	</globalProperty>
+	
+	<globalProperty>
+		<property>reports.archivingIDIdentifier</property>
+		<defaultValue>ARCHIVING ID</defaultValue>
+		<description>Identifier type that should be returned for the archiving ID</description>
+	</globalProperty>
 
 	<globalProperty>
 		<property>reports.tracIdentifier</property>

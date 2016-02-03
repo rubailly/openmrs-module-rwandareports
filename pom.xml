@@ -23,9 +23,9 @@
 	</modules>
 
 	<properties>
-		<openMRSVersion>1.9.1</openMRSVersion>
+		<openMRSVersion>1.9.2</openMRSVersion>
 		<reportingVersion>0.9.7</reportingVersion>
-		<rowperpatientsVersion>1.5.2-SNAPSHOT</rowperpatientsVersion>
+		<rowperpatientsVersion>1.5.3-SNAPSHOT</rowperpatientsVersion>
 		<orderextensionVersion>2.0-SNAPSHOT</orderextensionVersion>
 		<reportingobjectgroupVersion>1.1-SNAPSHOT</reportingobjectgroupVersion>
 		<htmlwidgetsVersion>1.6.4</htmlwidgetsVersion>

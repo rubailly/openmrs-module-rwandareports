@@ -264,7 +264,7 @@ $(document).ready(function(){
 <td><a href="${pageContext.request.contextPath}/module/rwandareports/remove_dataDelay.form" onclick=msgrem(this)>Remove</a></td>
 </tr>
 <tr>
-<td rowspan="4" class="tabletd">Research</td>
+<td rowspan="3" class="tabletd">Research</td>
 <td>DQ-HIV Research Data Quality</td>
 <td>Central</td>
 <td><a href="${pageContext.request.contextPath}/module/rwandareports/register_hivResearchDataQuality.form" onclick=msgreg(this)>(Re) register</a></td>
@@ -281,12 +281,6 @@ $(document).ready(function(){
 <td>Central</td>
 <td><a href="${pageContext.request.contextPath}/module/rwandareports/register_PrimaryCareRegistrationData.form" onclick=msgreg(this)>(Re) register</a></td>
 <td><a href="${pageContext.request.contextPath}/module/rwandareports/remove_PrimaryCareRegistrationData.form" onclick=msgrem(this)>Remove</a></td>	
-</tr>
-<tr>
-<td>Generic Encounter Report</td>
-<td>Central</td>
-<td><a href="${pageContext.request.contextPath}/module/rwandareports/register_EncounterAndObsReport.form" onclick=msgreg(this)>(Re) register</a></td>
-<td><a href="${pageContext.request.contextPath}/module/rwandareports/remove_EncounterAndObsReport.form" onclick=msgrem(this)>Remove</a></td>	
 </tr>
 <tr>
 <td rowspan="1" class="tabletd">HMIS Report</td>
@@ -489,7 +483,7 @@ $(document).ready(function(){
 </tr>
 <tr>
 <tr>
-<td rowspan="4" class="tabletd">PDC Reports</td>
+<td rowspan="5" class="tabletd">PDC Reports</td>
 <td>PDC-Weekly Consulation sheet</td>
 <td>At Site</td>
 <td><a href="${pageContext.request.contextPath}/module/rwandareports/register_pdcWeeklySheet.form" onclick=msgreg(this)>(Re) register</a></td>
@@ -506,6 +500,37 @@ $(document).ready(function(){
 <td>At site</td>
 <td><a href="${pageContext.request.contextPath}/module/rwandareports/register_pdcIndicatorReport.form" onclick=msgreg(this)>(Re) register</a></td>
 <td><a href="${pageContext.request.contextPath}/module/rwandareports/remove_pdcIndicatorReport.form" onclick=msgrem(this)>Remove</a></td>	
+</tr>
+<tr>
+<td>PDC Missed Visits report</td>
+<td>At site</td>
+<td><a href="${pageContext.request.contextPath}/module/rwandareports/register_pdcMissedVisitsReport.form" onclick=msgreg(this)>(Re) register</a></td>
+<td><a href="${pageContext.request.contextPath}/module/rwandareports/remove_pdcMissedVisitsReport.form" onclick=msgrem(this)>Remove</a></td>	
+</tr>
+<tr>
+<td>PDC-Monthly Lost to Follow-up report</td>
+<td>At site</td>
+<td><a href="${pageContext.request.contextPath}/module/rwandareports/register_pdcMonthlyLTFUReport.form" onclick=msgreg(this)>(Re) register</a></td>
+<td><a href="${pageContext.request.contextPath}/module/rwandareports/remove_pdcMonthlyLTFUReport.form" onclick=msgrem(this)>Remove</a></td>	
+</tr>
+<tr>
+<td rowspan="3" class="tabletd">Generic Reports</td>
+<td>Generic Encounter Report</td>
+<td>Central</td>
+<td><a href="${pageContext.request.contextPath}/module/rwandareports/register_EncounterAndObsReport.form" onclick=msgreg(this)>(Re) register</a></td>
+<td><a href="${pageContext.request.contextPath}/module/rwandareports/remove_EncounterAndObsReport.form" onclick=msgrem(this)>Remove</a></td>	
+</tr>
+<tr>
+<td>Generic Patient by Program Report</td>
+<td>Central</td>
+<td><a href="${pageContext.request.contextPath}/module/rwandareports/register_PatientByProgramReport.form" onclick=msgreg(this)>(Re) register</a></td>
+<td><a href="${pageContext.request.contextPath}/module/rwandareports/remove_PatientByProgramReport.form" onclick=msgrem(this)>Remove</a></td>	
+</tr>
+<tr>
+<td>Generic Drug Report</td>
+<td>Central</td>
+<td><a href="${pageContext.request.contextPath}/module/rwandareports/register_DrugReport.form" onclick=msgreg(this)>(Re) register</a></td>
+<td><a href="${pageContext.request.contextPath}/module/rwandareports/remove_DrugReport" onclick=msgrem(this)>Remove</a></td>	
 </tr>
 </table>
 <%@ include file="/WEB-INF/template/footer.jsp"%>

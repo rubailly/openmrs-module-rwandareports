@@ -421,6 +421,16 @@ public class SetupExposedClinicInfantMonthly {
 		dataSetDefinition4.addColumn(address, new HashMap<String, Object>());
 		dataSetDefinition5.addColumn(address, new HashMap<String, Object>());
 		
+		
+		MultiplePatientDataDefinitions tracNetId=RowPerPatientColumns.getTracnetId("TRACNET_ID");
+		
+		dataSetDefinition1.addColumn(tracNetId, new HashMap<String, Object>());
+		dataSetDefinition2.addColumn(tracNetId, new HashMap<String, Object>());
+		dataSetDefinition3.addColumn(tracNetId, new HashMap<String, Object>());
+		dataSetDefinition4.addColumn(tracNetId, new HashMap<String, Object>());
+		dataSetDefinition5.addColumn(tracNetId, new HashMap<String, Object>());
+
+		
 		PatientRelationship accompagnateur = RowPerPatientColumns.getAccompRelationship("AccompName");
 		dataSetDefinition1.addColumn(accompagnateur, new HashMap<String, Object>());
 		dataSetDefinition2.addColumn(accompagnateur, new HashMap<String, Object>());

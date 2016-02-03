@@ -228,7 +228,13 @@ public class SetupEligibleForViralLoadReport {
 		PatientAttribute healthCenter = RowPerPatientColumns.getHealthCenter("healthcenter");
 		dataSetDefinition1.addColumn(healthCenter, new HashMap<String, Object>());
 		dataSetDefinition2.addColumn(healthCenter, new HashMap<String, Object>());
-		dataSetDefinition3.addColumn(healthCenter, new HashMap<String, Object>());
+		dataSetDefinition3.addColumn(healthCenter, new HashMap<String, Object>());		
+
+		MultiplePatientDataDefinitions tracNetId=RowPerPatientColumns.getTracnetId("TRACNET_ID");			
+		dataSetDefinition1.addColumn(tracNetId, new HashMap<String, Object>());
+		dataSetDefinition2.addColumn(tracNetId, new HashMap<String, Object>());
+		dataSetDefinition3.addColumn(tracNetId, new HashMap<String, Object>());
+		
 		
 		MostRecentObservation viralLoadResults = RowPerPatientColumns.getMostRecentViralLoad("ViralLoad", "@ddMMMyy");
 		dataSetDefinition1.addColumn(viralLoadResults, new HashMap<String, Object>());

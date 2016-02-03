@@ -48,10 +48,13 @@ public class CombinedHFCSPAlerts implements CustomCalculation{
 
 					if(viraload.getValue().size() > 0)
 					{
+						try{
 						lastviraload = viraload.getValue().get(viraload.getValue().size()-1);
 						String [] valueSplited=name.split(" ");
 						obsId = valueSplited[0];
 						obsDate = valueSplited[1];
+						System.out.println("=======obsId====="+obsId+ "====patient data result===="+result.getPatientData().getPatient().getPatientId());
+						System.out.println("======obsDate test me===="+obsDate);
 					    Date dateVl=null;
 						try{
 							 SimpleDateFormat format=new SimpleDateFormat("yyyy/MM/dd");
@@ -68,6 +71,7 @@ public class CombinedHFCSPAlerts implements CustomCalculation{
 							{
 								alerts.append("VL Failure "+viraloadObs+".\n");
 							}
+						}catch(ArrayIndexOutOfBoundsException e){}
 					  }
 					else if(lastviraload == null)
 					{
@@ -89,6 +93,7 @@ public class CombinedHFCSPAlerts implements CustomCalculation{
 
 					if(cd4test.getValue().size() > 0)
 					{
+						try{
 						lastcd4 = cd4test.getValue().get(cd4test.getValue().size()-1);
 						String [] valueSplited=name.split(" ");
 						cd4Id = valueSplited[0];
@@ -105,6 +110,7 @@ public class CombinedHFCSPAlerts implements CustomCalculation{
 							if(diff > 12){
 								alerts.append("Very late CD4(" + diff + " months ago).\n");
 							}
+					       }catch(Exception e){}
 						 }
 					else if(lastcd4 == null)
 					{
@@ -128,8 +134,9 @@ public class CombinedHFCSPAlerts implements CustomCalculation{
 					
 					if(allCd4.getValue().size() > 0)
 					{
-						lastCd4 = allCd4.getValue().get(allCd4.getValue().size()-1);
 						try{
+						lastCd4 = allCd4.getValue().get(allCd4.getValue().size()-1);
+						//try{
 							String [] valueSplited=name.split(" ");
 							
 							cd41Filter=valueSplited[0];
@@ -154,7 +161,7 @@ public class CombinedHFCSPAlerts implements CustomCalculation{
 							}
 							}
 						    }
-							catch(ArrayIndexOutOfBoundsException e){}
+							catch(Exception e){}
 						 }
 				     }	
 			    }
@@ -172,7 +179,7 @@ public class CombinedHFCSPAlerts implements CustomCalculation{
 					String weight2Filter=null;
 					String weight2Date=null;
 					
-					System.out.println("All CD4: "+name);
+					//System.out.println("All CD4: "+name);
 					
 					if(allweight.getValue().size() > 0)
 					{
@@ -185,13 +192,9 @@ public class CombinedHFCSPAlerts implements CustomCalculation{
 							
 							weight2Filter=valueSplited[2];
 							weight2Date=valueSplited[3];
-							System.out.println("weight size: "+valueSplited.length);
-							System.out.println("w1: "+weight1Filter+ " w2: "+weight2Filter);
-							
-							if(valueSplited.length >=4){
+								if(valueSplited.length >=4){
 							double firstWeight=Double.parseDouble(weight1Filter);
 							double secondWeight=Double.parseDouble(weight2Filter);
-							System.out.println("W11: "+firstWeight+ " W22: "+secondWeight);
 							
 							int nweight1=(int) firstWeight;
 							int nweight2=(int) secondWeight;
@@ -205,8 +208,6 @@ public class CombinedHFCSPAlerts implements CustomCalculation{
 							weightList.add(secondWeight);
 							
 							int decline = calculatePercentageDecline(weightList);
-							System.out.println("list of weights Int: "+weightValues);
-							System.out.println("list of weights double: "+weightList);
 							
 							if(decline > 5)
 							{
@@ -219,7 +220,7 @@ public class CombinedHFCSPAlerts implements CustomCalculation{
 							}
 							}
 						    }
-							catch(ArrayIndexOutOfBoundsException e){}
+							catch(Exception e){}
 						 }
 				     }	
 			    }
@@ -239,11 +240,13 @@ public class CombinedHFCSPAlerts implements CustomCalculation{
 
 					if(weight.getValue().size() > 0)
 					{
+						try{
 						lastweight = weight.getValue().get(weight.getValue().size()-1);
 						String [] valueSplited=name.split(" ");
 						weightId = valueSplited[0];
 						weightDate = valueSplited[1];
 					    weightObs=Double.parseDouble(weightId);
+					 }catch(Exception e){}
 						}
 					else if(lastweight == null)
 					{
@@ -265,6 +268,7 @@ public class CombinedHFCSPAlerts implements CustomCalculation{
 
 					if(height.getValue().size() > 0)
 					{
+						try{
 						lastHeight = height.getValue().get(height.getValue().size()-1);
 						String [] valueSplited=name.split(" ");
 						heightId = valueSplited[0];
@@ -286,6 +290,7 @@ public class CombinedHFCSPAlerts implements CustomCalculation{
 							alerts.append("Low BMI (" + bd.doubleValue()  + ").\n");
 						}
 					  }	
+					}catch(Exception e){}
 					}
 					
 					else if(lastHeight == null)
@@ -308,11 +313,13 @@ public class CombinedHFCSPAlerts implements CustomCalculation{
 					
 					if(oiConcept.getValue().size() > 0)
 					{
+						try{
 						lastOi = oiConcept.getValue().get(oiConcept.getValue().size()-1);
 						String [] valueSplited=name.split(" ");
 						oiInfection = valueSplited[0];
 						oiDate = valueSplited[1];
 						alerts.append("OI reported last visit: " + oiInfection + "\n");
+					}catch(Exception e){}
 						}
 					}	
 			    }
@@ -329,11 +336,13 @@ public class CombinedHFCSPAlerts implements CustomCalculation{
 					
 					if(sideEffect.getValue().size() > 0)
 					{
+						try{
 						lastsideEffect = sideEffect.getValue().get(sideEffect.getValue().size()-1);
 						String [] valueSplited=name.split(" ");
 						sideffectConc = valueSplited[0];
 						sideffectConcDate = valueSplited[1];
 					    alerts.append("Side Effects reported last visit: " + sideffectConc + "\n");
+					}catch(Exception e){}
 					}
 				  }	
 			    }			

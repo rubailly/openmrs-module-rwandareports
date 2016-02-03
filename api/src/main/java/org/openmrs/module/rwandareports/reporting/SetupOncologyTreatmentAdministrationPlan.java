@@ -101,6 +101,8 @@ public class SetupOncologyTreatmentAdministrationPlan {
 		
 		dataSetDefinition.addColumn(RowPerPatientColumns.getIMBId("Id"), new HashMap<String, Object>());
 		
+		dataSetDefinition.addColumn(RowPerPatientColumns.getArchivingId("archivingId"), new HashMap<String, Object>());
+				
 		dataSetDefinition.addColumn(RowPerPatientColumns.getMostRecentWeight("RecentWeight", "dd/MMM/yy"),
 		    new HashMap<String, Object>());
 		

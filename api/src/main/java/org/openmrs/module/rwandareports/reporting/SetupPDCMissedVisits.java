@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.Form;
 import org.openmrs.Location;
@@ -33,7 +34,7 @@ import org.openmrs.module.rwandareports.util.Cohorts;
 import org.openmrs.module.rwandareports.util.GlobalPropertiesManagement;
 import org.openmrs.module.rwandareports.util.RowPerPatientColumns;
 
-public class SetupPDCWeeklyAlert {
+public class SetupPDCMissedVisits {
 	
 	GlobalPropertiesManagement gp = new GlobalPropertiesManagement();
 	
@@ -46,6 +47,7 @@ public class SetupPDCWeeklyAlert {
 	private List<Form> referralAndVisitForms=new ArrayList<Form>();
 	private Form referralForm;
     private Form visitForm;
+    private Concept returnVisitDate;
 	
 	public void setup() throws Exception {
 		
@@ -53,8 +55,8 @@ public class SetupPDCWeeklyAlert {
 		
 		ReportDefinition rd = createReportDefinition();
 		
-		ReportDesign design = Helper.createRowPerPatientXlsOverviewReportDesign(rd, "PDCConsultationSheet.xls",
-		    "pdcWeeklyConsultationSheet.xls_", null);
+		ReportDesign design = Helper.createRowPerPatientXlsOverviewReportDesign(rd, "PDCMissedVisitSheet.xls",
+		    "PDCMissedVisitSheet.xls_", null);
 		
 		Properties props = new Properties();
 		props.put("repeatingSections", "sheet:1,row:9,dataset:dataSet");
@@ -67,17 +69,17 @@ public class SetupPDCWeeklyAlert {
 	public void delete() {
 		ReportService rs = Context.getService(ReportService.class);
 		for (ReportDesign rd : rs.getAllReportDesigns(false)) {
-			if ("pdcWeeklyConsultationSheet.xls_".equals(rd.getName())) {
+			if ("PDCMissedVisitSheet.xls_".equals(rd.getName())) {
 				rs.purgeReportDesign(rd);
 			}
 		}
-		Helper.purgeReportDefinition("PDC-Weekly consulation Sheet");
+		Helper.purgeReportDefinition("PDC Missed Visits");
 	}
 	
 	private ReportDefinition createReportDefinition() {
 		
 		ReportDefinition reportDefinition = new ReportDefinition();
-		reportDefinition.setName("PDC-Weekly consulation Sheet");
+		reportDefinition.setName("PDC Missed Visits");
 				
 		reportDefinition.addParameter(new Parameter("location", "Health Center", Location.class));	
 		reportDefinition.setBaseCohortDefinition(Cohorts.createParameterizedLocationCohort("At Location"),ParameterizableUtil.createParameterMappings("location=${location}"));
@@ -92,10 +94,10 @@ public class SetupPDCWeeklyAlert {
 	private void createDataSetDefinition(ReportDefinition reportDefinition) {
 		// Create new dataset definition 
 		RowPerPatientDataSetDefinition dataSetDefinition = new RowPerPatientDataSetDefinition();
-		dataSetDefinition.setName("PDC Weekly consulation Data Set");
+		dataSetDefinition.setName("PDC Missed Visits Data Set");
 		
 		SortCriteria sortCriteria = new SortCriteria();
-		sortCriteria.addSortElement("nextRDV", SortDirection.ASC);
+		sortCriteria.addSortElement("LastVisit", SortDirection.DESC);
 		dataSetDefinition.setSortCriteria(sortCriteria);
 		
 		dataSetDefinition.addParameter(new Parameter("location", "Location", Location.class));
@@ -103,7 +105,7 @@ public class SetupPDCWeeklyAlert {
 		
 		//Add filters
 		dataSetDefinition.addFilter(Cohorts.createInProgramParameterizableByDate("Patients in "+PDCProgram.getName(), PDCProgram), ParameterizableUtil.createParameterMappings("onDate=${endDate}"));
-		dataSetDefinition.addFilter(Cohorts.getMondayToSundayPatientReturnVisitAndFollowUp(referralAndVisitForms), ParameterizableUtil.createParameterMappings("end=${endDate+7d},start=${endDate}"));
+		dataSetDefinition.addFilter(Cohorts.createPatientsLateForPDCVisit(returnVisitDate,pdcEncType), ParameterizableUtil.createParameterMappings("endDate=${endDate}"));
 		
 		//Add Columns
 		dataSetDefinition.addColumn(RowPerPatientColumns.getFirstNameColumn("givenName"), new HashMap<String, Object>());
@@ -191,6 +193,7 @@ public class SetupPDCWeeklyAlert {
 	    visitForm=gp.getForm(GlobalPropertiesManagement.PDC_VISIT_FORM);
 	    referralAndVisitForms.add(referralForm);
 	    referralAndVisitForms.add(visitForm);
+	    returnVisitDate = gp.getConcept(GlobalPropertiesManagement.RETURN_VISIT_DATE);
 	   
 		
 	}

@@ -1909,6 +1909,38 @@ public static SqlCohortDefinition getMondayToSundayPatientReturnVisit(List<Form>
 		return visit;
 	}
 	
+	public static CompositionCohortDefinition createPatientsLateForPDCVisit(Concept concept, EncounterType encounterType) {
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append("select lastObs.person_id from (select * from (select * from obs where voided = 0 and concept_id=  ");
+		sql.append(concept.getConceptId());
+		sql.append(" order by value_datetime desc) as o group by o.person_id) as lastObs, (select * from (select * from encounter where encounter_type=");
+		sql.append(encounterType.getEncounterTypeId());
+		sql.append("  and voided=0 order by encounter_datetime desc) as e group by e.patient_id) as last_Visit where ");
+		sql.append(" DATEDIFF(:endDate,lastObs.value_datetime)>1 and (not last_Visit.encounter_datetime > lastObs.value_datetime) and last_Visit.patient_id=lastObs.person_id");
+		
+		SqlCohortDefinition lateVisit = new SqlCohortDefinition(sql.toString());
+		lateVisit.addParameter(new Parameter("endDate", "endDate", Date.class));
+		
+		StringBuilder sql2 = new StringBuilder();
+		sql2.append("select o.person_id from obs o where o.voided=0 and o.concept_id=");
+		sql2.append(concept.getConceptId());
+		sql2.append(" and DATEDIFF(:endDate,o.value_datetime)>1 and o.person_id not in(select patient_id from encounter where encounter_type =");
+		sql2.append(encounterType.getEncounterTypeId());
+		sql2.append(" and voided = 0)");
+		
+		SqlCohortDefinition lateVisitNoEncounter = new SqlCohortDefinition(sql2.toString());
+		lateVisitNoEncounter.addParameter(new Parameter("endDate", "endDate", Date.class));
+		
+		CompositionCohortDefinition visit = new CompositionCohortDefinition();
+		visit.addParameter(new Parameter("endDate", "endDate", Date.class));
+		visit.getSearches().put("1",new Mapped<CohortDefinition>(lateVisit, ParameterizableUtil.createParameterMappings("endDate=${endDate}")));
+		visit.getSearches().put("2",new Mapped<CohortDefinition>(lateVisitNoEncounter, ParameterizableUtil.createParameterMappings("endDate=${endDate}")));
+		visit.setCompositionString("1 OR 2");
+
+		return visit;
+	}
+	
 	public static CompositionCohortDefinition createPatientsLateForVisit(List<Concept> concepts, List<Form> forms) {
 		
 		StringBuilder sql = new StringBuilder();

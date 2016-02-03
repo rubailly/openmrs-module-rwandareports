@@ -294,14 +294,9 @@ public class SetupPDCIndicatorReport {
         	  visitsInQuarterIndicator.setEncounterQuery(new Mapped<EncounterQuery>(visitsInQuarter,ParameterizableUtil.createParameterMappings("endDate=${endDate},startDate=${startDate}")));
               
               dsd.addColumn(visitsInQuarterIndicator); 
- 
-        	  
-         
-        }
+          }
         
-  
-        
-        private CohortIndicatorDataSetDefinition createQuarterlyBaseDataSet() {
+     private CohortIndicatorDataSetDefinition createQuarterlyBaseDataSet() {
                 CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
                 dsd.setName("Quarterly Cohort Data Set");
                 dsd.addParameter(new Parameter("startDate", "Start Date", Date.class));
@@ -323,8 +318,6 @@ public class SetupPDCIndicatorReport {
                 
                 
 //PDC1
-                
-                
                 SqlCohortDefinition patientUnderOneYear=new SqlCohortDefinition();
                 patientUnderOneYear.setName("patientUnderOneYear");
                 patientUnderOneYear.setQuery("select p.person_id from person p where DATEDIFF(:endDate,p.birthdate)<365 and p.voided=0");
@@ -340,10 +333,15 @@ public class SetupPDCIndicatorReport {
                 patientGreatterThanOrEqualTwoyears.setName("patientGreatterThanOrEqualTwoyears");
                 patientGreatterThanOrEqualTwoyears.setQuery("select p.person_id from person p where DATEDIFF(:endDate,p.birthdate)>=730 and p.voided=0");
                 patientGreatterThanOrEqualTwoyears.addParameter(new Parameter("endDate","endDate",Date.class));
+                
+                //CodedObsCohortDefinition reasonForNotDoingFollowUpCohort=Cohorts.createCodedObsCohortDefinition("reasonForNotDoingFollowUpCohort",reasonForNotDoingFollowUp, null, SetComparator.IN, TimeModifier.LAST);
+                
+                SqlCohortDefinition reasonForNotDoingFollowUpCohort=new SqlCohortDefinition();
+                reasonForNotDoingFollowUpCohort.setName("reasonForNotDoingFollowUpCohort");
+                reasonForNotDoingFollowUpCohort.setQuery("select distinct o.person_id from obs o where o.concept_id="+reasonForNotDoingFollowUp.getConceptId()+" and o.voided=0 order by o.obs_datetime desc");
+                reasonForNotDoingFollowUpCohort.addParameter(new Parameter("endDate","endDate",Date.class));
 
-                
-                CodedObsCohortDefinition reasonForNotDoingFollowUpCohort=Cohorts.createCodedObsCohortDefinition("reasonForNotDoingFollowUpCohort",reasonForNotDoingFollowUp, null, SetComparator.IN, TimeModifier.LAST);
-                
+             
                 CompositionCohortDefinition activePatient = new CompositionCohortDefinition();
                 activePatient.setName("activePatient");
                 activePatient.addParameter(new Parameter("startDate", "startDate", Date.class));
@@ -367,13 +365,21 @@ public class SetupPDCIndicatorReport {
                         new Mapped(activePatientIndicator, ParameterizableUtil.createParameterMappings("endDate=${endDate},startDate=${startDate}")), "");
             
                     
-                
-                
 // PDC2
-                SqlCohortDefinition patientWithRefferralReasonOnIntakeForm=Cohorts.getPatientsWithObservationInFormBetweenStartAndEndDate("patientWithReferralReason",PDCIntakeForm,reasoForReferral);
+               // SqlCohortDefinition patientWithRefferralReasonOnIntakeForm=Cohorts.getPatientsWithObservationInFormBetweenStartAndEndDate("patientWithReferralReason",PDCIntakeForm,reasoForReferral);
+                SqlCohortDefinition patientWithRefferralReasonOnIntakeForm=new SqlCohortDefinition();
+                patientWithRefferralReasonOnIntakeForm.setName("patientWithRefferralReasonOnIntakeForm");
+                patientWithRefferralReasonOnIntakeForm.setQuery("select distinct o.person_id from encounter e, obs o where e.encounter_id=o.encounter_id and e.form_id="+PDCIntakeForm.getFormId()+" and o.concept_id="+reasoForReferral.getConceptId()+" " +
+                "and o.voided=0 and e.voided=0 and (o.value_numeric is NOT NULL or o.value_coded is NOT NULL or o.value_datetime is NOT NULL or o.value_boolean is NOT NULL) and o.obs_datetime>= :startDate and o.obs_datetime<= :endDate");
+                patientWithRefferralReasonOnIntakeForm.addParameter(new Parameter("startDate","startDate",Date.class));
+                patientWithRefferralReasonOnIntakeForm.addParameter(new Parameter("endDate","endDate",Date.class));
                 
-                SqlCohortDefinition patientWithRefferralReasonOnReferralForm=Cohorts.getPatientsWithObservationInFormBetweenStartAndEndDate("patientWithReferralReason",PDCReferralForm,reasoForReferral);
-                
+                //SqlCohortDefinition patientWithRefferralReasonOnReferralForm=Cohorts.getPatientsWithObservationInFormBetweenStartAndEndDate("patientWithReferralReason",PDCReferralForm,reasoForReferral);
+                SqlCohortDefinition patientWithRefferralReasonOnReferralForm=new SqlCohortDefinition();
+                patientWithRefferralReasonOnReferralForm.setName("patientWithRefferralReasonOnReferralForm");
+                patientWithRefferralReasonOnReferralForm.setQuery("select distinct o.person_id from encounter e, obs o where e.encounter_id=o.encounter_id and e.form_id="+PDCReferralForm.getFormId()+" and o.concept_id="+reasoForReferral.getConceptId()+" and o.voided=0 and e.voided=0 and o.obs_datetime>= :startDate and o.obs_datetime<= :endDate");
+                patientWithRefferralReasonOnReferralForm.addParameter(new Parameter("startDate","startDate",Date.class));
+                patientWithRefferralReasonOnReferralForm.addParameter(new Parameter("endDate","endDate",Date.class));
                 
                 CompositionCohortDefinition newPatientEnrolledWithRefferralReasonOnIntakeOrReferralForm = new CompositionCohortDefinition();
                 newPatientEnrolledWithRefferralReasonOnIntakeOrReferralForm.setName("newPatientEnrolledWithRefferralReasonOnIntakeOrReferralForm");
@@ -388,16 +394,26 @@ public class SetupPDCIndicatorReport {
                 CohortIndicator newPatientEnrolledWithRefferralReasonOnIntakeOrReferralFormIndicator = Indicators.newCountIndicator("Number of newly enrolled patients total and per intake category indicator", newPatientEnrolledWithRefferralReasonOnIntakeOrReferralForm,
                     ParameterizableUtil.createParameterMappings("endDate=${endDate},startDate=${startDate}"));
                        
-                
                 dsd.addColumn("PDC2", "Number of newly enrolled patients total and per intake category",
                     new Mapped(newPatientEnrolledWithRefferralReasonOnIntakeOrReferralFormIndicator, ParameterizableUtil.createParameterMappings("endDate=${endDate},startDate=${startDate}")), "");
         
                 
 // PDC3
-                SqlCohortDefinition patientWithRefferralReasonOnIntakeFormAnyTime=Cohorts.getPatientsWithObservationInForm("patientWithReferralReasonAnyTime",PDCIntakeForm,reasoForReferral);
+               // SqlCohortDefinition patientWithRefferralReasonOnIntakeFormAnyTime=Cohorts.getPatientsWithObservationInForm("patientWithReferralReasonAnyTime",PDCIntakeForm,reasoForReferral);
+                
+                SqlCohortDefinition patientWithRefferralReasonOnIntakeFormAnyTime=new SqlCohortDefinition();
+                patientWithRefferralReasonOnIntakeFormAnyTime.setName("patientWithRefferralReasonOnIntakeFormAnyTime");
+                patientWithRefferralReasonOnIntakeFormAnyTime.setQuery("select distinct o.person_id from encounter e, obs o where e.encounter_id=o.encounter_id and e.form_id="+PDCIntakeForm.getFormId()+" and o.concept_id="+reasoForReferral.getConceptId()+" " +
+                "and o.voided=0 and e.voided=0 and (o.value_numeric is NOT NULL or o.value_coded is NOT NULL or o.value_datetime is NOT NULL or o.value_boolean is NOT NULL)");
                 
                 
-                SqlCohortDefinition patientWithRefferralReasonOnReferralFormAnyTime=Cohorts.getPatientsWithObservationInForm("patientWithReferralReasonAnyTime",PDCReferralForm,reasoForReferral);
+                //SqlCohortDefinition patientWithRefferralReasonOnReferralFormAnyTime=Cohorts.getPatientsWithObservationInForm("patientWithReferralReasonAnyTime",PDCReferralForm,reasoForReferral);
+                
+                SqlCohortDefinition patientWithRefferralReasonOnReferralFormAnyTime=new SqlCohortDefinition();
+                patientWithRefferralReasonOnReferralFormAnyTime.setName("patientWithRefferralReasonOnIntakeFormAnyTime");
+                patientWithRefferralReasonOnReferralFormAnyTime.setQuery("select distinct o.person_id from encounter e, obs o where e.encounter_id=o.encounter_id and e.form_id="+PDCReferralForm.getFormId()+" and o.concept_id="+reasoForReferral.getConceptId()+" " +
+                "and o.voided=0 and e.voided=0 and (o.value_numeric is NOT NULL or o.value_coded is NOT NULL or o.value_datetime is NOT NULL or o.value_boolean is NOT NULL)");
+                
                 
                 CompositionCohortDefinition everPatientEnrolledWithRefferralReasonOnIntakeOrReferralForm = new CompositionCohortDefinition();
                 everPatientEnrolledWithRefferralReasonOnIntakeOrReferralForm.setName("everPatientEnrolledWithRefferralReasonOnIntakeOrReferralForm");
@@ -414,16 +430,18 @@ public class SetupPDCIndicatorReport {
                 dsd.addColumn("PDC3", "Number of ever enrolled patients total and per intake category",
                     new Mapped(everPatientEnrolledWithRefferralReasonOnIntakeOrReferralFormIndicator, ParameterizableUtil.createParameterMappings("endDate=${endDate},startDate=${startDate}")), "");
 
-                
+                  
 //PDC4
               // EncounterCohortDefinition patientWithIntakeVisit=Cohorts.createEncounterBasedOnForms("patientWithIntakeVisit", onOrAfterOnOrBefore, intakeVisitForms);
+                //SqlCohortDefinition patientWithIntakeDateOnPDCReferralForm=Cohorts.getPatientsWithObservationValueDateTimeInFormBetweenStartAndEndDate("patientWithIntakeDateOnPDCReferralForm",PDCReferralForm,returnVisitDate);
+               
+                SqlCohortDefinition patientWithIntakeDateOnPDCReferralForm=new SqlCohortDefinition();
+                patientWithIntakeDateOnPDCReferralForm.setName("patientWithIntakeDateOnPDCReferralForm");
+                patientWithIntakeDateOnPDCReferralForm.setQuery("select distinct o.person_id from encounter e, obs o where e.encounter_id=o.encounter_id and e.form_id="+PDCReferralForm.getFormId()+" " +
+                "and o.concept_id="+returnVisitDate.getConceptId()+" and o.voided=0 and e.voided=0 and o.value_datetime>= :startDate and o.value_datetime<= :endDate");
+                patientWithIntakeDateOnPDCReferralForm.addParameter(new Parameter("startDate","startDate",Date.class));
+                patientWithIntakeDateOnPDCReferralForm.addParameter(new Parameter("endDate","endDate",Date.class));
                 
-               
-               
-               SqlCohortDefinition patientWithIntakeDateOnPDCReferralForm=Cohorts.getPatientsWithObservationValueDateTimeInFormBetweenStartAndEndDate("patientWithIntakeDateOnPDCReferralForm",PDCReferralForm,returnVisitDate);
-               
-               
-               
                 
                CompositionCohortDefinition patientWithIntakeVisitAndEnrolledInQuarter = new CompositionCohortDefinition();
                patientWithIntakeVisitAndEnrolledInQuarter.setName("patientWithIntakeVisitAndEnrolledInQuarter");
@@ -456,8 +474,6 @@ public class SetupPDCIndicatorReport {
                    
                    ProgramEnrollmentCohortDefinition patientsEverEnrolled=Cohorts.createProgramEnrollment("patientsEverEnrolled", PDCProgram);
                 
-                   
-                   
                    CompositionCohortDefinition patientWithVisitFormEverEnrolled = new CompositionCohortDefinition();
                    patientWithVisitFormEverEnrolled.setName("patientWithVisitFormEverEnrolled");
                    patientWithVisitFormEverEnrolled.addParameter(new Parameter("startDate", "startDate", Date.class));
@@ -479,17 +495,33 @@ public class SetupPDCIndicatorReport {
                        
                    dsd.addColumn("PDC5D", "Number of ever enrolled children",
                            new Mapped(patientsEverEnrolledIndicatorDenominator, ParameterizableUtil.createParameterMappings("endDate=${endDate},startDate=${startDate}")), "");
-  
+ 
                    
   //PDC6 visits is located up
                    
                    
-  //PDC7
+  /*//PDC7
                    SqlCohortDefinition patientsWithAnySocialSupportAlreadyReceived=Cohorts.getPatientsWithObservationValueDateTimeInFormBetweenStartAndEndDate("patientsWithAnySocialSupport",PDCVisitForm,socialEconomicAssistanceAlreadyReceived);
-                   
                    SqlCohortDefinition patientsWithAnySocialSupportRecommanded=Cohorts.getPatientsWithObservationValueDateTimeInFormBetweenStartAndEndDate("patientsWithAnySocialSupport",PDCVisitForm,socialEconomicAssistanceRecommanded);
-                   
                    SqlCohortDefinition patientsWithAnySocialSupportNotRecommended=Cohorts.getPatientsWithObservationInFormBetweenStartAndEndDate("patientsWithAnySocialSupport",PDCVisitForms,socialEconomicAssistance,socialAssistanceTypes);
+                    */
+                   SqlCohortDefinition patientsWithAnySocialSupportRecommended=new SqlCohortDefinition();
+                   patientsWithAnySocialSupportRecommended.setName("patientsWithAnySocialSupportRecommended");
+                   patientsWithAnySocialSupportRecommended.setQuery("select distinct o.person_id from encounter e, obs o where e.encounter_id=o.encounter_id and e.form_id="+PDCVisitForm.getFormId()+" and o.concept_id="+socialEconomicAssistanceRecommanded.getConceptId()+" and o.voided=0 and e.voided=0 and o.obs_datetime>= :startDate and o.obs_datetime<= :endDate");
+                   patientsWithAnySocialSupportRecommended.addParameter(new Parameter("startDate","startDate",Date.class));
+                   patientsWithAnySocialSupportRecommended.addParameter(new Parameter("endDate","endDate",Date.class));
+                   
+                   SqlCohortDefinition patientsWithAnySocialSupportAlreadyReceived=new SqlCohortDefinition();
+                   patientsWithAnySocialSupportAlreadyReceived.setName("patientsWithAnySocialSupportAlreadyReceived");
+                   patientsWithAnySocialSupportAlreadyReceived.setQuery("select distinct o.person_id from encounter e, obs o where e.encounter_id=o.encounter_id and e.form_id="+PDCVisitForm.getFormId()+" and o.concept_id="+socialEconomicAssistanceAlreadyReceived.getConceptId()+" and o.voided=0 and e.voided=0 and o.obs_datetime>= :startDate and o.obs_datetime<= :endDate");
+                   patientsWithAnySocialSupportAlreadyReceived.addParameter(new Parameter("startDate","startDate",Date.class));
+                   patientsWithAnySocialSupportAlreadyReceived.addParameter(new Parameter("endDate","endDate",Date.class));
+                   
+                   SqlCohortDefinition patientsWithAnySocialSupportNotRecommended=new SqlCohortDefinition();
+                   patientsWithAnySocialSupportNotRecommended.setName("patientsWithAnySocialSupportNotRecommended");
+                   patientsWithAnySocialSupportNotRecommended.setQuery("select distinct o.person_id from encounter e, obs o where e.encounter_id=o.encounter_id and e.form_id="+PDCVisitForm.getFormId()+" and o.concept_id="+socialEconomicAssistance.getConceptId()+" and o.value_coded="+socialEconomicAssistanceNotRecommanded+" and o.voided=0 and e.voided=0 and o.obs_datetime>= :startDate and o.obs_datetime<= :endDate");
+                   patientsWithAnySocialSupportNotRecommended.addParameter(new Parameter("startDate","startDate",Date.class));
+                   patientsWithAnySocialSupportNotRecommended.addParameter(new Parameter("endDate","endDate",Date.class));
                    
                    CompositionCohortDefinition newPatientsWithAnySocialSupportInQuarter = new CompositionCohortDefinition();
                    newPatientsWithAnySocialSupportInQuarter.setName("newPatientsWithAnySocialSupportInQuarter");
@@ -499,17 +531,20 @@ public class SetupPDCIndicatorReport {
                    newPatientsWithAnySocialSupportInQuarter.getSearches().put("2", new Mapped(inPDCProgramByStartDateAndEndDate, ParameterizableUtil.createParameterMappings("onOrAfter=${startDate},onOrBefore=${endDate}")));
                    newPatientsWithAnySocialSupportInQuarter.getSearches().put("3", new Mapped(patientsWithAnySocialSupportNotRecommended, ParameterizableUtil.createParameterMappings("startDate=${startDate},endDate=${endDate}")));
                    newPatientsWithAnySocialSupportInQuarter.getSearches().put("4", new Mapped(patientsWithAnySocialSupportAlreadyReceived, ParameterizableUtil.createParameterMappings("startDate=${startDate},endDate=${endDate}")));
-                   newPatientsWithAnySocialSupportInQuarter.getSearches().put("5", new Mapped(patientsWithAnySocialSupportRecommanded, ParameterizableUtil.createParameterMappings("startDate=${startDate},endDate=${endDate}")));
+                   newPatientsWithAnySocialSupportInQuarter.getSearches().put("5", new Mapped(patientsWithAnySocialSupportRecommended, ParameterizableUtil.createParameterMappings("startDate=${startDate},endDate=${endDate}")));
                    newPatientsWithAnySocialSupportInQuarter.setCompositionString("(2 AND (NOT 1)) AND (3 OR 4 OR 5)");
-                              
-                   CohortIndicator newPatientsWithAnySocialSupportInQuarterIndicatorNumerator = Indicators.newCountIndicator("Number of new patients enrolled in the reference quarter who were screened (defined as “already receiving”, “recommended”, or “not recommended” answer on any visit) indicator", newPatientsWithAnySocialSupportInQuarter,
-                       ParameterizableUtil.createParameterMappings("endDate=${endDate},startDate=${startDate}"));
+                   
+                   
+                  CohortIndicator newPatientsWithAnySocialSupportInQuarterIndicatorNumerator = Indicators.newCountIndicator("Number of new patients enrolled in the reference quarter who were screened (defined as “already receiving”, “recommended”, or “not recommended” answer on any visit) indicator", 
+                		  newPatientsWithAnySocialSupportInQuarter,
+                           ParameterizableUtil.createParameterMappings("endDate=${endDate},startDate=${startDate}"));
                           
-                   
-                   dsd.addColumn("PDC7N", "Number of new patients enrolled in the reference quarter who were screened (defined as “already receiving”, “recommended”, or “not recommended” answer on any visit)",
-                       new Mapped(newPatientsWithAnySocialSupportInQuarterIndicatorNumerator, ParameterizableUtil.createParameterMappings("endDate=${endDate},startDate=${startDate}")), "");
-           
-                   
+                         
+                       
+                       dsd.addColumn("PDC7N", "Number of new patients enrolled in the reference quarter who were screened (defined as “already receiving”, “recommended”, or “not recommended” answer on any visit)",
+                           new Mapped(newPatientsWithAnySocialSupportInQuarterIndicatorNumerator, ParameterizableUtil.createParameterMappings("endDate=${endDate},startDate=${startDate}")), "");
+                
+                  
                    CompositionCohortDefinition newPatientsInQuarter = new CompositionCohortDefinition();
                    newPatientsInQuarter.setName("newPatientsInQuarter");
                    newPatientsInQuarter.addParameter(new Parameter("startDate", "startDate", Date.class));
@@ -525,10 +560,7 @@ public class SetupPDCIndicatorReport {
                    dsd.addColumn("PDC7D", "Number of new patients enrolled in the reference quarter",
                        new Mapped(newPatientsInQuarterIndicatorDenominator, ParameterizableUtil.createParameterMappings("endDate=${endDate},startDate=${startDate}")), "");
            
-                   
-
-                   
-//PDC8
+    //PDC8
                    
                    CompositionCohortDefinition currentlyEnrolledPatientsWithAnySocialSupportInQuarter = new CompositionCohortDefinition();
                    currentlyEnrolledPatientsWithAnySocialSupportInQuarter.setName("currentlyEnrolledPatientsWithAnySocialSupportInQuarter");
@@ -536,7 +568,7 @@ public class SetupPDCIndicatorReport {
                    currentlyEnrolledPatientsWithAnySocialSupportInQuarter.addParameter(new Parameter("endDate", "endDate", Date.class));
                    currentlyEnrolledPatientsWithAnySocialSupportInQuarter.getSearches().put("1", new Mapped(inPDCProgramByStartDateAndEndDate, ParameterizableUtil.createParameterMappings("onOrAfter=${startDate},onOrBefore=${endDate}")));
                    currentlyEnrolledPatientsWithAnySocialSupportInQuarter.getSearches().put("2", new Mapped(patientsWithAnySocialSupportAlreadyReceived, ParameterizableUtil.createParameterMappings("startDate=${startDate},endDate=${endDate}")));
-                   currentlyEnrolledPatientsWithAnySocialSupportInQuarter.getSearches().put("3", new Mapped(patientsWithAnySocialSupportRecommanded, ParameterizableUtil.createParameterMappings("startDate=${startDate},endDate=${endDate}")));
+                   currentlyEnrolledPatientsWithAnySocialSupportInQuarter.getSearches().put("3", new Mapped(patientsWithAnySocialSupportRecommended, ParameterizableUtil.createParameterMappings("startDate=${startDate},endDate=${endDate}")));
                    currentlyEnrolledPatientsWithAnySocialSupportInQuarter.setCompositionString("1 AND (2 OR 3)");
                               
                    CohortIndicator currentlyEnrolledPatientsWithAnySocialSupportInQuarterIndicatorNumerator = Indicators.newCountIndicator("Number # of currently enrolled children receiving social support at last visit  (defined as “already receiving” or “recommended and starting today” answer) indicator", currentlyEnrolledPatientsWithAnySocialSupportInQuarter,
@@ -555,8 +587,7 @@ public class SetupPDCIndicatorReport {
                        new Mapped(currentlyEnrolledPatientsIndicatorDenominator, ParameterizableUtil.createParameterMappings("endDate=${endDate},startDate=${startDate}")), "");
            
               
-                   
- //PDC10
+  //PDC10
                    
                    SqlCohortDefinition patientUnderSixMonthWithBirthWeightAndIntervalGrowthDocumentedInLastVisit=new SqlCohortDefinition();
                    patientUnderSixMonthWithBirthWeightAndIntervalGrowthDocumentedInLastVisit.setName("patientUnderSixMonthWithBirthWeightAndIntervalGrowthDocumented");
@@ -574,8 +605,6 @@ public class SetupPDCIndicatorReport {
                    dsd.addColumn("PDC10N", "Number of of children with a visit in the reference quarter with age <6 months at time of visit who have interval growth documented ",
                            new Mapped(patientUnderSixMonthWithBirthWeightAndIntervalGrowthDocumentedInLastVisitIndicatorNumerator, ParameterizableUtil.createParameterMappings("endDate=${endDate},startDate=${startDate}")), "");
                    
-                   
-					                   
                    SqlCohortDefinition patientUnderSixMonthWithBirthWeightDocumentedInLastVisit=new SqlCohortDefinition();
                    patientUnderSixMonthWithBirthWeightDocumentedInLastVisit.setName("patientUnderSixMonthWithBirthWeightAndIntervalGrowthDocumented");
                    patientUnderSixMonthWithBirthWeightDocumentedInLastVisit.setQuery("select lastEnc.patient_id from (select * from (select * from encounter where form_id="+PDCVisitForm.getFormId()+" and voided=0 order by encounter_datetime desc) as orderedEnc group by orderedEnc.encounter_id) as lastEnc"
@@ -611,9 +640,6 @@ public class SetupPDCIndicatorReport {
                            new Mapped(patientUnderSixMonthWithInadaquateIntervalGrowthDocumentedInLastVisitIndicatorNumerator, ParameterizableUtil.createParameterMappings("endDate=${endDate},startDate=${startDate}")), "");
                    
                                
-
-       
-        
 //PDC14
                    
                    NumericObsCohortDefinition patientWithCorrectedAge=Cohorts.createNumericObsCohortDefinition("patientWithCorrectedAge", correctedAge, 40.0, RangeComparator.LESS_THAN, TimeModifier.LAST);
@@ -685,8 +711,6 @@ public class SetupPDCIndicatorReport {
 
                    CodedObsCohortDefinition ASQAgeUsedCohort=Cohorts.createCodedObsCohortDefinition("ASQAgeUsedCohort",onOrAfterOnOrBefore, ASQAgeUsed, null, SetComparator.IN, TimeModifier.LAST);
         
-       
-        
                    
                    CompositionCohortDefinition patientWithASQAndGrayBlackInQuarter = new CompositionCohortDefinition();
                    patientWithASQAndGrayBlackInQuarter.setName("patientWithASQAndGrayBlackInQuarter");
@@ -712,6 +736,7 @@ public class SetupPDCIndicatorReport {
                        
                    dsd.addColumn("PDC15D", "Number of children with an ASQ completed and documented in the reference quarter",
                            new Mapped(patientWithASQInQuarterIndicatorDenominator, ParameterizableUtil.createParameterMappings("endDate=${endDate},startDate=${startDate}")), "");
+                           
 //PDC16
                    
                    SqlCohortDefinition patientBetween6And12MonthsWithASQDocumentedInLastEncounter=new SqlCohortDefinition();
@@ -749,12 +774,14 @@ public class SetupPDCIndicatorReport {
                    
 //PDC17
                    
-                  /* EncounterCohortDefinition  patientWithVisitInQuarter=Cohorts.createEncounterBasedOnForms("patientWithVisitInQuarter", onOrAfterOnOrBefore, PDCVisitForms);
-                  */ 
-                   CodedObsCohortDefinition patientsWithECDCounseling=Cohorts.createCodedObsCohortDefinition("patientsWithECDCounseling", ECDCounselingSession,yes, SetComparator.IN, TimeModifier.ANY);
+                   //EncounterCohortDefinition  patientWithVisitInQuarter=Cohorts.createEncounterBasedOnForms("patientWithVisitInQuarter", onOrAfterOnOrBefore, PDCVisitForms);
                    
-       
-        
+                   //CodedObsCohortDefinition patientsWithECDCounseling=Cohorts.createCodedObsCohortDefinition("patientsWithECDCounseling", ECDCounselingSession,yes, SetComparator.IN, TimeModifier.ANY);
+                   SqlCohortDefinition patientsWithECDCounseling=new SqlCohortDefinition();
+                   patientsWithECDCounseling.setName("patientsWithECDCounseling");
+                   patientsWithECDCounseling.setQuery("select distinct o.person_id from obs o where o.concept_id="+ECDCounselingSession.getConceptId()+" and o.value_coded="+yes.getConceptId()+" " +
+                   		"and o.voided=0 order by o.obs_datetime desc");
+                   
                    CompositionCohortDefinition currentlyEnrolledPatientsWithAnyECDCounselingInQuarter = new CompositionCohortDefinition();
                    currentlyEnrolledPatientsWithAnyECDCounselingInQuarter.setName("currentlyEnrolledPatientsWithAnyECDCounselingInQuarter");
                    currentlyEnrolledPatientsWithAnyECDCounselingInQuarter.addParameter(new Parameter("startDate", "startDate", Date.class));

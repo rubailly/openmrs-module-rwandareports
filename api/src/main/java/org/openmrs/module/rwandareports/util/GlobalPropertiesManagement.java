@@ -322,6 +322,9 @@ public class GlobalPropertiesManagement {
 	//Identifiers
 	public final static String IMB_IDENTIFIER = "reports.imbIdIdentifier"; 
 	
+	public final static String ARCHIVING_IDENTIFIER = "reports.archivingIDIdentifier"; 
+	
+	
 	public final static String PC_IDENTIFIER = "reports.primaryCareIdIdentifier"; 
 	
 	public final static String TRACNET_IDENTIFIER = "reports.tracIdentifier";
